@@ -1,0 +1,33 @@
+﻿@model HyrBil.Models.Booking
+
+@{
+    ViewData["Title"] = "Avsluta bokning";
+}
+
+<h2>Avsluta bokning för bil med registreringsnummer: @Model.Car.RegNr.ToUpper()</h2>
+
+<hr />
+<h4>Bilens storlek: @Model.Car.CarSize</h4>
+<h4>Mätarställning vid bokning: @Model.Car.CurrentDistance</h4>
+<h4>Kundens personnummer: @Model.Customer.PNr</h4>
+<h4>Kundens namn: @Model.Customer.FirstName @Model.Customer.LastName</h4>
+<h4>Bokningsadatum: @Model.BookingDate</h4>
+<h4>Återlämningsdatum:</h4>
+<form asp-action="CalculateCost" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <input asp-for="ReturnDate" class="form-control" />
+        <span asp-validation-for="ReturnDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Hur många km har kunden kört?</label>
+        <input asp-for="Car.Mileage" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-lg">Beräkna kostnad</button>
+    </div>
+
+</form>
+<hr />
+<h4>@ViewBag.TheCost</h4>

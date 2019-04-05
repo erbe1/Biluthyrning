@@ -1,0 +1,88 @@
+﻿@model IEnumerable<HyrBil.Models.Booking>
+
+@{
+    ViewData["Title"] = "Bokningar";
+}
+
+<h2>Bokningar</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Car.RegNr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car.CarSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car.CurrentDistance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer.PNr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BookingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReturnDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Car.RegNr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Car.CarSize)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Car.CurrentDistance) km
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.PNr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookingDate)
+                </td>
+                @if (item.BookingStatus == true)
+                {
+                    <td>
+                        <a asp-action="ReturnCar" asp-route-id="@item.Id" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">Avsluta bokning</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReturnDate)
+                    </td>
+                }
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

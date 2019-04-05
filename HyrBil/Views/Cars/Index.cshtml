@@ -1,0 +1,57 @@
+﻿@model IEnumerable<HyrBil.Models.Car>
+
+@{
+    ViewData["Title"] = "Bilregister";
+}
+
+<h2>Bilregister</h2>
+
+<h2>@ViewBag.UserMessage</h2>
+
+<p>
+    <a asp-action="Create">Lägg till en ny bil</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @*@Html.ActionLink("Reg-nummer", "Index", new {sortOrder = ViewBag.RegNrSort})*@
+                @Html.DisplayNameFor(model => model.RegNr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrentDistance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rented)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegNr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarSize)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurrentDistance)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rented)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,99 @@
+﻿@model HyrBil.Models.ViewModels.CarBookingVM
+@*@model IEnumerable<HyrBil.Models.Customer>*@
+
+@{
+    ViewData["Title"] = "Bokningar";
+}
+
+<h2>Alla bokningar för @Model.Customer.FirstName @Model.Customer.LastName </h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Customer.FirstName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Customer.LastName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.PNr)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Customer.PNr)
+        </dd>
+    </dl>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Car.RegNr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car.CarSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Booking.BookingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Booking.ReturnDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Booking.Cost)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.CustomerBookings)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Car.RegNr)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Car.CarSize)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BookingDate)
+                        </td>
+                        <td>
+                            @if(item.BookingStatus == true)
+                            {
+                                <p>Pågående uthyrning</p>
+                            }
+                            else
+                            {
+                                <p>Återlämnad: @Html.DisplayFor(modelItem => item.ReturnDate)</p>
+                            }
+                        </td>
+                        <td>
+                            @if(item.BookingStatus == true)
+                            {
+                                <p>Pågående uthyrning</p>
+                            }
+                            else
+                            {
+                                <p>@Html.DisplayFor(modelItem => item.Cost) kr</p>
+                            }
+                        </td>
+                    </tr>
+                }
+        </tbody>
+    </table>
+
+
+
+
+
+    <div>
+        <a asp-action="Index">Tillbaks till listan</a>
+    </div>

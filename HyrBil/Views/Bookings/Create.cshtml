@@ -1,0 +1,49 @@
+﻿@model HyrBil.Models.ViewModels.CarBookingVM
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<h4>Booking</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Booking.Car.CarSize" class="control-label">Vilken bilstorlek vill kunden boka?</label>
+                <select asp-for="Booking.Car.CarSize" asp-items="Model.CarSizes" class="form-control">
+                    <option disabled selected>Välj biltyp</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Booking.Customer.CustomerId">Vilken kund vill boka bilen?</label>
+                <select asp-for="Booking.Customer.CustomerId" asp-items="Model.Customers" class="form-control">
+                    <option disabled selected>Välj kund</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Booking.BookingDate">Vilket datum vill kunden hyra bilen?</label><br />
+                <input asp-for="Booking.BookingDate" />
+            </div>
+
+            <div class="form-group">
+                <div class="text-warning">@ViewBag.UserMessageFail</div>
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
