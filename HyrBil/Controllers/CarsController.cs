@@ -8,37 +8,23 @@ using Microsoft.EntityFrameworkCore;
 using HyrBil.Data;
 using HyrBil.Models;
 using HyrBil.Models.ViewModels;
+using HyrBil.Services.Repositories;
 
 namespace HyrBil.Views
 {
     public class CarsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICarsRepo _carsRepo;
 
-        public CarsController(ApplicationDbContext context)
+        public CarsController(ICarsRepo carsRepo)
         {
-            _context = context;
+            _carsRepo = carsRepo;
         }
 
         // GET: Cars
-        public async Task<IActionResult> Index()//(string sortOrder)
+        public async Task<IActionResult> Index()
         {
-            //ViewBag.RegNrSort = String.IsNullOrEmpty(sortOrder) ? "regDesc" : "";
-
-            //var cars = from c in _context.Cars select c;
-
-            //switch (sortOrder)
-            //{
-            //    case "regDesc":
-            //        cars = cars.OrderByDescending(c => c.RegNr);
-            //        break;
-            //    default:
-            //        cars = cars.OrderBy(c => c.CarSize);
-            //        break;
-            //}
-
-
-            return View(await _context.Cars.ToListAsync());
+            return View(await (Task.Run(() => _carsRepo.GetCars())));
         }
 
         private List<SelectListItem> GetCarSizeToList()
@@ -54,16 +40,15 @@ namespace HyrBil.Views
             return selectListItems;
         }
 
-        // GET: Cars/Details/5
+        //GET: Cars/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var car =  _carsRepo.GetCarById(id);
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (car == null)
             {
                 return NotFound();
@@ -87,18 +72,16 @@ namespace HyrBil.Views
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,RegNr,CarSize,CurrentDistance")] Car car)
         {
-            var carsInDb = _context.Cars.FirstOrDefault(x => x.RegNr == car.RegNr);
 
-            //if (ModelState.IsValid)
-            //{
+            var carsInDb = _carsRepo.GetCarsByRegNr(car.RegNr);
+
             if (carsInDb == null)
             {
 
                 ViewBag.UserMessage = $"Bil tillagd med registreringsnummer {car.RegNr.ToUpper()}";
                 ModelState.Clear();
                 car.Id = Guid.NewGuid();
-                _context.Add(car);
-                await _context.SaveChangesAsync();
+                _carsRepo.CreateCar(car);
                 return RedirectToAction(nameof(Index));
 
             }
@@ -108,8 +91,7 @@ namespace HyrBil.Views
                 return RedirectToAction(nameof(Index));
 
             }
-            //}
-            return View(car);
+            //return View(car);
         }
 
         // GET: Cars/Edit/5
@@ -120,12 +102,17 @@ namespace HyrBil.Views
                 return NotFound();
             }
 
-            var car = await _context.Cars.FindAsync(id);
+            var car =  _carsRepo.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
             }
-            return View(car);
+
+            CarBookingVM carBookingVM = new CarBookingVM();
+            carBookingVM.CarSizes = GetCarSizeToList();
+            carBookingVM.Car = car;
+
+            return View(carBookingVM);
         }
 
         // POST: Cars/Edit/5
@@ -144,8 +131,7 @@ namespace HyrBil.Views
             {
                 try
                 {
-                    _context.Update(car);
-                    await _context.SaveChangesAsync();
+                    _carsRepo.Update(car);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -160,7 +146,12 @@ namespace HyrBil.Views
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(car);
+
+            CarBookingVM carBookingVM = new CarBookingVM();
+            carBookingVM.CarSizes = GetCarSizeToList();
+            carBookingVM.Car = car;
+
+            return View(carBookingVM);
         }
 
         // GET: Cars/Delete/5
@@ -170,9 +161,7 @@ namespace HyrBil.Views
             {
                 return NotFound();
             }
-
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var car = _carsRepo.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -186,15 +175,15 @@ namespace HyrBil.Views
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var car = await _context.Cars.FindAsync(id);
-            _context.Cars.Remove(car);
-            await _context.SaveChangesAsync();
+            var car = _carsRepo.GetCarById(id);
+            _carsRepo.DeleteCar(car);
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool CarExists(Guid id)
         {
-            return _context.Cars.Any(e => e.Id == id);
+            return _carsRepo.Exists(id);
         }
     }
 }

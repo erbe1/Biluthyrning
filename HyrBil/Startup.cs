@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using HyrBil.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HyrBil.Services.Repositories;
 
 namespace HyrBil
 {
@@ -39,6 +40,9 @@ namespace HyrBil
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddTransient<ICarsRepo, CarsRepo>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

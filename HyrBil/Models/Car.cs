@@ -27,6 +27,7 @@ namespace HyrBil.Models
         [RegularExpression(@"[\d]{1,10}", ErrorMessage = "Har bilen verkligen gått så långt..?")]
         public decimal CurrentDistance { get; set; }
 
+        [Display(Name = "Hur långt bilen har körts den här bokningen")]
         public decimal Mileage { get; set; }
 
         [Display(Name = "Uthyrd")]
