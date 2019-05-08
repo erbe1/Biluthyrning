@@ -65,6 +65,14 @@ namespace HyrBil.Views
             return View(size);
         }
 
+        public async Task<IActionResult> CleanCar(Car car)
+        {
+            var carToClean = _carsRepo.GetCarById(car.Id);
+            carToClean.Cleaning = false;
+            await _carsRepo.Update(carToClean);
+            return RedirectToAction(nameof(Index));
+        }
+
         // POST: Cars/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -83,13 +91,11 @@ namespace HyrBil.Views
                 car.Id = Guid.NewGuid();
                 await _carsRepo.CreateCar(car);
                 return RedirectToAction(nameof(Index));
-
             }
             else
             {
                 ViewBag.UserMessageFail = $"Det finns redan en bil med registreringsnummer {car.RegNr.ToUpper()}";
                 return RedirectToAction(nameof(Index));
-
             }
         }
 

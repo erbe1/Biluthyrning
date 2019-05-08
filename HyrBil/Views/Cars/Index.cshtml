@@ -15,7 +15,6 @@
     <thead>
         <tr>
             <th>
-                @*@Html.ActionLink("Reg-nummer", "Index", new {sortOrder = ViewBag.RegNrSort})*@
                 @Html.DisplayNameFor(model => model.RegNr)
             </th>
             <th>
@@ -51,9 +50,9 @@
                 </td>
                 @if (item.Cleaning == true)
                 {
-                    <td>
-                        <i class="fas fa-exclamation"> Städa</i>
-                    </td>
+                <td>
+                    <a asp-action="CleanCar" asp-route-id="@item.Id" class="btn btn-primary btn-sm active" role="button" aria-pressed="true"><i class="fas fa-flag"> Städa</i></a>
+                </td>
                 }
                 else
                 {

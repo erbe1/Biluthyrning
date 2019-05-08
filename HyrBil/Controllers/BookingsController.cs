@@ -239,7 +239,6 @@ namespace HyrBil.Views
                 return NotFound();
             }
 
-            //var booking = await _context.Bookings.FindAsync(id);
             var booking = _bookingsRepo.GetBookingsById(id);
             if (booking == null)
             {
@@ -304,9 +303,6 @@ namespace HyrBil.Views
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            //var booking = await _context.Bookings.FindAsync(id);
-            //_context.Bookings.Remove(booking);
-            //await _context.SaveChangesAsync();
 
             var booking = _bookingsRepo.GetBookingsById(id);
             await _bookingsRepo.DeleteBooking(booking);
@@ -317,7 +313,6 @@ namespace HyrBil.Views
         private bool BookingExists(Guid id)
         {
             return _bookingsRepo.Exists(id);
-            //return _context.Bookings.Any(e => e.Id == id);
         }
     }
 }
