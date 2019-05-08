@@ -27,6 +27,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Rented)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cleaning)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -46,6 +49,18 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Rented)
                 </td>
+                @if (item.Cleaning == true)
+                {
+                    <td>
+                        <i class="fas fa-exclamation"> Städa</i>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <p>Nej</p>
+                    </td>
+                }
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

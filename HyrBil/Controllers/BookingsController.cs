@@ -24,25 +24,12 @@ namespace HyrBil.Views
             _customersRepo = customersRepo;
             _carsRepo = carsRepo;
         }
-        //private readonly ApplicationDbContext _context;
-
-        //public BookingsController(ApplicationDbContext context)
-        //{
-        //    _context = context;
-        //}
 
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            //_bookingsRepo.GetBookings();
-            //CarBookingVM carBookingVM = new CarBookingVM();
-            //carBookingVM.CarSizes = GetCarSizeToList();
-            //carBookingVM.Customers = GetCustomersToList();
-
-            //return View(carBookingVM);
 
             return View(await (Task.Run(() => _bookingsRepo.GetBookings())));
-            //return View(await _context.Bookings.Include(x => x.Car).Include(y => y.Customer).ToListAsync());
         }
 
         // GET: Bookings/Details/5
@@ -53,8 +40,7 @@ namespace HyrBil.Views
                 return NotFound();
             }
             var booking = _bookingsRepo.GetBookingsById(id);
-            //var booking = await _context.Bookings
-                //.FirstOrDefaultAsync(m => m.Id == id);
+
             if (booking == null)
             {
                 return NotFound();
@@ -76,7 +62,6 @@ namespace HyrBil.Views
         private List<SelectListItem> GetCustomersToList()
         {
             var theCustomers = _bookingsRepo.GetCustomers();
-            //var theCustomers = _context.Customers.ToList();
 
             List<SelectListItem> customerList = new List<SelectListItem>();
 
@@ -114,12 +99,9 @@ namespace HyrBil.Views
             var currentDate = DateTime.Now;
 
             //Väljer ut första lediga bil som matchar önskad storlek.  
-            //var allCars = _context.Cars.ToList();
             var allCars = _bookingsRepo.GetAllCars();
             var notRentedCars = allCars.Where(x => x.Rented == false).ToList();
             var theCarWeChoose = notRentedCars.FirstOrDefault(x => x.CarSize == booking.Car.CarSize);
-
-            //var theCarWeChoose = getAvailableCar(booking);
 
             //För att fylla på dropdown-listan ifall det inte skulle gå att boka en bil.
             CarBookingVM carBookingVM = new CarBookingVM();
@@ -145,30 +127,19 @@ namespace HyrBil.Views
                 booking.Id = Guid.NewGuid();
                 booking.BookingStatus = true;
                 booking.Car.Rented = true;
-                _bookingsRepo.AddBooking(booking);
-                //_context.Add(booking);
+                await _bookingsRepo.AddBooking(booking);
 
                 theCarWeChoose.Rented = true;
 
-                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
 
             }
-            //if (ModelState.IsValid)
-            //{
-            //    booking.Id = Guid.NewGuid();
-            //    _context.Add(booking);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(booking);
         }
 
         private object getAvailableCar(Booking booking)
         {
             var allCars = _bookingsRepo.GetAllCars();
 
-            //var allCars = _context.Cars.ToList();
             var notRentedCars = allCars.Where(x => x.Rented == false).ToList();
             var theCarWeChoose = notRentedCars.FirstOrDefault(x => x.CarSize == booking.Car.CarSize);
             return theCarWeChoose;
@@ -179,13 +150,8 @@ namespace HyrBil.Views
         public async Task<IActionResult> CalculateCost([Bind("Id,Customer,Car,BookingDate,ReturnDate")] Booking booking)
         {
             var carToReturn = _bookingsRepo.GetCarToReturn(booking);
-            //var carToReturn = await _context.Bookings.Include(x => x.Car).Include(z => z.Customer).FirstOrDefaultAsync(y => y.Id == booking.Id);
             decimal distance = booking.Car.Mileage;
             carToReturn.Car.Mileage = distance;
-            //carToReturn.Car.Rented = false;
-            //carToReturn.Car.CurrentDistance = carToReturn.Car.CurrentDistance + distance;
-
-            //_context.Update(carToReturn);
 
             var theReturnDate = booking.ReturnDate;
             carToReturn.ReturnDate = theReturnDate;
@@ -206,15 +172,13 @@ namespace HyrBil.Views
                 if (daysRented == 1)
                 {
                     ViewBag.TheCost = $"Kostnaden för {theDaysTheCarWasRented} dag blir: {carToReturn.Cost} kr";
-                    _bookingsRepo.SaveChanges();
-                    //_context.SaveChanges();
+                    await _bookingsRepo.SaveChanges();
                     return View("PayCar", carToReturn);
                 }
                 else
                 {
                     ViewBag.TheCost = $"Kostnaden för {theDaysTheCarWasRented} dagar blir: {carToReturn.Cost} kr";
-                    _bookingsRepo.SaveChanges();
-                    //_context.SaveChanges();
+                    await _bookingsRepo.SaveChanges();
                     return View("PayCar", carToReturn);
                 }
 
@@ -223,16 +187,14 @@ namespace HyrBil.Views
             {
                 carToReturn.Cost = decimal.Round((booking.theBaseDayRental * numberOfDaysRented * 1.2m) + (booking.theKmPrice * distance), 2, MidpointRounding.AwayFromZero);
                 ViewBag.TheCost = $"Kostnaden för {theDaysTheCarWasRented} dagar blir: {carToReturn.Cost} kr";
-                _bookingsRepo.SaveChanges();
-                //_context.SaveChanges();
+                await _bookingsRepo.SaveChanges();
                 return View("PayCar", carToReturn);
             }
             else if (carToReturn.Car.CarSize == CarSize.Minibuss)
             {
-                carToReturn.Cost = decimal.Round((booking.theBaseDayRental* numberOfDaysRented * 1.7m) + (booking.theKmPrice * distance * 1.5m), 2, MidpointRounding.AwayFromZero);
+                carToReturn.Cost = decimal.Round((booking.theBaseDayRental * numberOfDaysRented * 1.7m) + (booking.theKmPrice * distance * 1.5m), 2, MidpointRounding.AwayFromZero);
                 ViewBag.TheCost = $"Kostnaden för {theDaysTheCarWasRented} dagar blir: {carToReturn.Cost} kr";
-                _bookingsRepo.SaveChanges();
-                //_context.SaveChanges();
+                await _bookingsRepo.SaveChanges();
                 return View("PayCar", carToReturn);
             }
             return View();
@@ -243,7 +205,6 @@ namespace HyrBil.Views
         public async Task<IActionResult> TakePayment(Guid id, [Bind("Id,Customer,Car,BookingDate,ReturnDate,Mileage")] Booking booking)
         {
             var finishBooking = _bookingsRepo.FinishBooking(booking);
-            //var finishBooking = await _context.Bookings.Include(x => x.Car).Include(y => y.Customer).SingleAsync(z => z.Id == booking.Id);
 
             //Bilen är återigen tillgänglig att bokas
             finishBooking.Car.Rented = false;
@@ -253,29 +214,25 @@ namespace HyrBil.Views
             finishBooking.Car.CurrentDistance = finishBooking.Car.CurrentDistance + distance;
             finishBooking.BookingStatus = false;
 
-            _bookingsRepo.Update(finishBooking);
-            //_context.Update(finishBooking);
+            //Bilen flaggas för städning
+            finishBooking.Car.Cleaning = true;
 
-
-            //_context.Bookings.Remove(booking);
-            _bookingsRepo.SaveChanges();
-            //await _context.SaveChangesAsync();
+            await _bookingsRepo.Update(finishBooking);
             ViewBag.Thanks = "Tack för din betalning";
 
             return RedirectToAction(nameof(Index));
         }
 
 
-        public async Task<IActionResult> ReturnCar(Booking booking)
+        public IActionResult ReturnCar(Booking booking)
         {
             var carToReturn = _bookingsRepo.GetCarToReturn(booking);
-            //var carToReturn = await _context.Bookings.Include(x => x.Car).Include(z => z.Customer).FirstOrDefaultAsync(y => y.Id == booking.Id);
             return View(carToReturn);
         }
 
 
         // GET: Bookings/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
@@ -307,9 +264,7 @@ namespace HyrBil.Views
             {
                 try
                 {
-                    _bookingsRepo.Update(booking);
-                    //_context.Update(booking);
-                    //await _context.SaveChangesAsync();
+                    await _bookingsRepo.Update(booking);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -328,7 +283,7 @@ namespace HyrBil.Views
         }
 
         // GET: Bookings/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
@@ -336,8 +291,6 @@ namespace HyrBil.Views
             }
 
             var booking = _bookingsRepo.GetBookingsById(id);
-            //var booking = await _context.Bookings
-            //    .FirstOrDefaultAsync(m => m.Id == id);
             if (booking == null)
             {
                 return NotFound();
@@ -356,7 +309,7 @@ namespace HyrBil.Views
             //await _context.SaveChangesAsync();
 
             var booking = _bookingsRepo.GetBookingsById(id);
-            _bookingsRepo.DeleteBooking(booking);
+            await _bookingsRepo.DeleteBooking(booking);
 
             return RedirectToAction(nameof(Index));
         }

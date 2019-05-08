@@ -25,7 +25,7 @@ namespace HyrBil.Services.Repositories
 
         public Customer GetCustomersById(Guid? id)
         {
-          return _context.Customers.FirstOrDefault(x => x.CustomerId == id);
+            return _context.Customers.FirstOrDefault(x => x.CustomerId == id);
         }
 
         IEnumerable<Booking> ICustomersRepo.GetCustomerBookings(Guid? id)
@@ -33,22 +33,22 @@ namespace HyrBil.Services.Repositories
             return _context.Bookings.Where(x => x.Customer.CustomerId == id).Include(y => y.Car).ToList();
         }
 
-        public void Add(Customer customer)
+        public async Task Add(Customer customer)
         {
             _context.Add(customer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Customer customer)
+        public async Task Update(Customer customer)
         {
             _context.Update(customer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteCustomer(Customer customer)
+        public async Task DeleteCustomer(Customer customer)
         {
             _context.Customers.Remove(customer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public bool Exists(Guid id)

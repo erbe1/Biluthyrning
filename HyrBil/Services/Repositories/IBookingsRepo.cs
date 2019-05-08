@@ -12,12 +12,12 @@ namespace HyrBil.Services.Repositories
         Booking GetBookingsById(Guid? id);
         IEnumerable<Customer> GetCustomers();
         IEnumerable<Car> GetAllCars();
-        void AddBooking(Booking booking);
+        Task AddBooking(Booking booking);
         Booking GetCarToReturn(Booking booking);
-        void SaveChanges();
+        Task SaveChanges();
         Booking FinishBooking(Booking booking);
-        void Update(Booking finishBooking);
-        void DeleteBooking(Booking booking);
+        Task Update(Booking finishBooking);
+        Task DeleteBooking(Booking booking);
         bool Exists(Guid id);
     }
 }

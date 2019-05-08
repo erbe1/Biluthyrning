@@ -11,9 +11,9 @@ namespace HyrBil.Services.Repositories
         IEnumerable<Car> GetCars();
         Car GetCarById(Guid? id);
         Car GetCarsByRegNr(string regNr);
-        void CreateCar(Car car);
-        void DeleteCar(Car car);
+        Task CreateCar(Car car);
+        Task DeleteCar(Car car);
         bool Exists(Guid id);
-        void Update(Car car);
+        Task Update(Car car);
     }
 }

@@ -18,16 +18,16 @@ namespace HyrBil.Services.Repositories
             _context = context;
         }
 
-        public void AddBooking(Booking booking)
+        public async Task AddBooking(Booking booking)
         {
             _context.Add(booking);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteBooking(Booking booking)
+        public async Task DeleteBooking(Booking booking)
         {
             _context.Bookings.Remove(booking);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public bool Exists(Guid id)
@@ -67,15 +67,15 @@ namespace HyrBil.Services.Repositories
             return _context.Customers.ToList();
         }
 
-        public void SaveChanges()
+        public async Task SaveChanges()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Booking finishBooking)
+        public async Task Update(Booking finishBooking)
         {
             _context.Update(finishBooking);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -32,16 +32,16 @@ namespace HyrBil.Services.Repositories
             return _context.Cars.FirstOrDefault(x => x.RegNr == regNr);
         }
 
-        public void CreateCar(Car car)
+        public async Task CreateCar(Car car)
         {
             _context.Add(car);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteCar(Car car)
+        public async Task DeleteCar(Car car)
         {
             _context.Cars.Remove(car);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public bool Exists(Guid id)
@@ -49,10 +49,10 @@ namespace HyrBil.Services.Repositories
             return _context.Cars.Any(e => e.Id == id);
         }
 
-        public void Update(Car car)
+        public async Task Update(Car car)
         {
             _context.Update(car);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

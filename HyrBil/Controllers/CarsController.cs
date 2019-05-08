@@ -41,7 +41,7 @@ namespace HyrBil.Views
         }
 
         //GET: Cars/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
@@ -81,7 +81,7 @@ namespace HyrBil.Views
                 ViewBag.UserMessage = $"Bil tillagd med registreringsnummer {car.RegNr.ToUpper()}";
                 ModelState.Clear();
                 car.Id = Guid.NewGuid();
-                _carsRepo.CreateCar(car);
+                await _carsRepo.CreateCar(car);
                 return RedirectToAction(nameof(Index));
 
             }
@@ -91,11 +91,10 @@ namespace HyrBil.Views
                 return RedirectToAction(nameof(Index));
 
             }
-            //return View(car);
         }
 
         // GET: Cars/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
@@ -131,7 +130,7 @@ namespace HyrBil.Views
             {
                 try
                 {
-                    _carsRepo.Update(car);
+                    await _carsRepo.Update(car);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -155,7 +154,7 @@ namespace HyrBil.Views
         }
 
         // GET: Cars/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
@@ -176,7 +175,7 @@ namespace HyrBil.Views
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var car = _carsRepo.GetCarById(id);
-            _carsRepo.DeleteCar(car);
+            await _carsRepo.DeleteCar(car);
 
             return RedirectToAction(nameof(Index));
         }

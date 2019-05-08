@@ -11,9 +11,9 @@ namespace HyrBil.Services.Repositories
         IEnumerable<Customer> GetCustomers();
         Customer GetCustomersById(Guid? id);
         IEnumerable<Booking> GetCustomerBookings(Guid? id);
-        void Add(Customer customer);
-        void Update(Customer customer);
-        void DeleteCustomer(Customer customer);
+        Task Add(Customer customer);
+        Task Update(Customer customer);
+        Task DeleteCustomer(Customer customer);
         bool Exists(Guid id);
     }
 }
