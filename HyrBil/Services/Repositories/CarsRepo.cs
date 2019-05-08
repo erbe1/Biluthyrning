@@ -17,7 +17,6 @@ namespace HyrBil.Services.Repositories
             _context = context;
         }
 
-
         public IEnumerable<Car> GetCars()
         {
             return _context.Cars.ToList();

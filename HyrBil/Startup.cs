@@ -42,7 +42,8 @@ namespace HyrBil
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<ICarsRepo, CarsRepo>();
-
+            services.AddTransient<IBookingsRepo, BookingsRepo>();
+            services.AddTransient<ICustomersRepo, CustomersRepo>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

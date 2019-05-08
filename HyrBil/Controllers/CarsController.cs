@@ -47,7 +47,7 @@ namespace HyrBil.Views
             {
                 return NotFound();
             }
-            var car =  _carsRepo.GetCarById(id);
+            var car = _carsRepo.GetCarById(id);
 
             if (car == null)
             {

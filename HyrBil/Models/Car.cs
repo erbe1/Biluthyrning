@@ -33,6 +33,14 @@ namespace HyrBil.Models
         [Display(Name = "Uthyrd")]
         public bool Rented { get; set; }
 
+        [Display(Name = "Behov av städning")]
+        public bool Cleaning { get; set; }
+
+        [Display(Name = "Behov av service")]
+        public bool Service { get; set; }
+
+        [Display(Name = "Bil kaseras")]
+        public bool Scrap { get; set; }
     }
 
     public enum CarSize

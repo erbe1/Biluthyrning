@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<HyrBil.Models.Booking>
-
+@*@model HyrBil.Models.ViewModels.CarBookingVM*@
 @{
     ViewData["Title"] = "Bokningar";
 }
@@ -7,7 +7,7 @@
 <h2>Bokningar</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Skapa ny bokning</a>
 </p>
 <table class="table">
     <thead>

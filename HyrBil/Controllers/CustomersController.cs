@@ -8,22 +8,32 @@ using Microsoft.EntityFrameworkCore;
 using HyrBil.Data;
 using HyrBil.Models;
 using HyrBil.Models.ViewModels;
+using HyrBil.Services.Repositories;
 
 namespace HyrBil.Views
 {
     public class CustomersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICustomersRepo _customersRepo;
 
-        public CustomersController(ApplicationDbContext context)
+        public CustomersController(ICustomersRepo customersRepo)
         {
-            _context = context;
+            _customersRepo = customersRepo;
         }
+
+        //private readonly ApplicationDbContext _context;
+
+        //public CustomersController(ApplicationDbContext context)
+        //{
+        //    _context = context;
+        //}
 
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            return View(await Task.Run(() => _customersRepo.GetCustomers()));
+
+            //return View(await _context.Customers.ToListAsync());
         }
 
         // GET: Customers/Details/5
@@ -34,7 +44,8 @@ namespace HyrBil.Views
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(x => x.CustomerId == id);
+            var customer = _customersRepo.GetCustomersById(id);
+            //var customer = await _context.Customers.FirstOrDefaultAsync(x => x.CustomerId == id);
 
             if (customer == null)
             {
@@ -45,7 +56,8 @@ namespace HyrBil.Views
 
             carBookingVM.Customer = customer;
 
-            var theCustomerBookings = _context.Bookings.Where(x => x.Customer.CustomerId == id).Include(y => y.Car).ToList();
+            var theCustomerBookings = _customersRepo.GetCustomerBookings(id);
+            //var theCustomerBookings = _context.Bookings.Where(x => x.Customer.CustomerId == id).Include(y => y.Car).ToList();
 
             carBookingVM.CustomerBookings = theCustomerBookings;
 
@@ -68,8 +80,9 @@ namespace HyrBil.Views
             if (ModelState.IsValid)
             {
                 customer.CustomerId = Guid.NewGuid();
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
+                _customersRepo.Add(customer);
+                //_context.Add(customer);
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -83,7 +96,8 @@ namespace HyrBil.Views
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = _customersRepo.GetCustomersById(id);
+            //var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -107,8 +121,9 @@ namespace HyrBil.Views
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    _customersRepo.Update(customer);
+                    //_context.Update(customer);
+                    //await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -133,9 +148,9 @@ namespace HyrBil.Views
             {
                 return NotFound();
             }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
+            var customer = _customersRepo.GetCustomersById(id);
+            //var customer = await _context.Customers
+            //    .FirstOrDefaultAsync(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -149,15 +164,20 @@ namespace HyrBil.Views
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            //var customer = await _context.Customers.FindAsync(id);
+            //_context.Customers.Remove(customer);
+            //await _context.SaveChangesAsync();
+
+            var customer = _customersRepo.GetCustomersById(id);
+            _customersRepo.DeleteCustomer(customer);
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(Guid id)
         {
-            return _context.Customers.Any(e => e.CustomerId == id);
+            //return _context.Customers.Any(e => e.CustomerId == id);
+            return _customersRepo.Exists(id);
         }
     }
 }
